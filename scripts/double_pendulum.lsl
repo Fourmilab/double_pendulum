@@ -14,8 +14,11 @@
     integer echo = TRUE;                // Echo chat and script commands ?
     integer trace = FALSE;              // Trace operation ?
     float timerTick = 0.01;             // Timer tick interval in seconds
+    integer tockCount = 1;              // Update objects every tockCount ticks
+    integer tock = 1;                   // Tock counter
     float globalScale = 1;              // Scale of box enclosing pendulum
     integer running = FALSE;            // Is simulation running ?
+    float runEndTime;                   // Run end time or -1 if none
     integer trails = FALSE;             // Draw trail of bob ?
     integer paths = FALSE;              // Trace path with particle system ?
     integer sit = FALSE;                // Is avatar sitting on the bob ?
@@ -197,16 +200,15 @@ tawk("Gaaak!  " + pname);
     /*  fuis  --  Encode floating point number as base64 string
 
         The fuis function encodes its floating point argument as a six
-        character string encoded as base64.  This version is modified from the
-        original in the LSL Library.  By ignoring the distinction between +0
-        and -0, this version runs almost three times faster than the
-        original.  While this does not preserve floating point numbers
-        bit-for-bit, it doesn't make any difference in our calculations.
+        character string encoded as base64.  This version is modified
+        from the original in the LSL Library.  By ignoring the
+        distinction between +0 and -0, this version runs almost three
+        times faster than the original.  While this does not preserve
+        floating point numbers bit-for-bit, it doesn't make any
+        difference in our calculations.
     */
 
     string fuis(float a) {
-        //  Detect the sign on zero.  It's ugly, but it gets you there
-        //  integer b = 0x80000000 & ~llSubStringIndex(llList2CSV([a]), "-");   // Sign
         /*  Test for negative number, ignoring the difference between
             +0 and -0.  While this does not preserve floating point
             numbers bit-for-bit, it doesn't make any difference in
@@ -253,11 +255,11 @@ tawk("Gaaak!  " + pname);
     string eff(float f) {
         return ef((string) f);
     }
-
+/*
     string efv(vector v) {          // Helper that takes a vector argument
         return ef((string) v);
     }
-
+*/
     //  Static constants to avoid costly allocation
     string efkdig = "0123456789";
     string efkdifdec = "0123456789.";
@@ -312,51 +314,7 @@ tawk("Gaaak!  " + pname);
         }
         return s;
     }
-/*
-    //  List of selectable diameters for lines
-    list flPlotLineDiam = [ 0.01, 0.015, 0.02, 0.025 ];
 
-    flPlotLine(vector fromPoint, vector toPoint,
-               vector colour, float diameter) {
-        float length = llVecDist(fromPoint, toPoint);
-        vector midPoint = (fromPoint + toPoint) / 2;
-
-        //  Encode length as integer from 0 to 1023 (10 bits)
-        integer ilength = llRound((length * 100) - 0.01);
-        if (ilength > 1023) {
-            ilength = 1023;
-        }
-
-        //  Encode colour as RGB with 16 levels of colour (12 bits)
-        integer icolour = (llRound(colour.x * 15) << 8) |
-                          (llRound(colour.y * 15) << 4) |
-                           llRound(colour.z * 15);
-
-        /*  Find the closest match to the requested diameter
-            among the options available in flPlotLineDiam
-
-        integer bestdia;
-        float bestdiamatch = 1e20;
-        integer diax;
-
-        for (diax = 0; diax < 4; diax++) {
-            float d = llFabs(diameter - llList2Float(flPlotLineDiam, diax));
-            if (d < bestdiamatch) {
-                bestdiamatch = d;
-                bestdia = diax;
-            }
-        }
-
-        string lineObj = "flPlotLine";
-        if (flPlotPerm) {
-            lineObj = "flPlotLine Permanent";
-        }
-        llRezObject(lineObj, midPoint, ZERO_VECTOR,
-            llRotBetween(<0, 0, 1>, llVecNorm(toPoint - midPoint)),
-            ((bestdia << 22) | (icolour << 10) | ilength)
-        );
-    }
-*/
     float x0;
     float y0;
     float ang0;
@@ -397,49 +355,18 @@ tawk("Gaaak!  " + pname);
         return calculateBobPosition(upperBobPos.x, upperBobPos.y, -ang1, l1);
     }
 
-    //  getAngularVelocities  --  Compute angular velocities of arms
-
-/*
-    vector getAngularVelocities() {
-        float cos0 = llCos(ang0);
-        float sin0 = llSin(ang0);
-        float cosDiff = llCos(ang0 - ang1);
-        float sinDiff = llSin(ang0 - ang1);
-        float cos2Diff = llCos(2 * (ang0 - ang1));
-        float sinAng2Diff = llSin(ang0 - 2 * ang1);
-        float velAng0 = l0 * v0 * v0;
-        float velAng1 = l1 * v1 * v1;
-        float massSum = m0 + m1;
-        float doubleMass1Sum = 2 * m0 + m1;
-        float baseVal = doubleMass1Sum - m1 * cos2Diff;
-        float ang0Val = velAng1 + velAng0 * cosDiff;
-        float ang0UpperVal = -g * doubleMass1Sum * sin0 -
-            m1 * g * sinAng2Diff -
-            2 * sinDiff * m1 * ang0Val;
-        acc0 = ang0UpperVal / (l0 * baseVal);
-        float ang1Val = (velAng0 + g * cos0) * massSum + velAng1 * m1 * cosDiff;
-        float ang1UpperVal = 2 * sinDiff * ang1Val;
-        acc1 = ang1UpperVal / (l1 * baseVal);
-        return < acc0, acc1, 0>;
-    }
-*/
-
     //  hamiltonian  --  Compute Hamiltonian from angles and momenta
 
     rotation hamiltonian(float Ang0,  float Ang1,  float Moment0,  float Moment1) {
         float sinA0mA1 = llSin(Ang0 - Ang1);
-//        float C0 = l0 * l1 * (m0 + m1 * llPow(llSin(Ang0 - Ang1), 2));
         float C0 = l0 * l1 * (m0 + m1 * (sinA0mA1 * sinA0mA1));
         float C1 = (Moment0 * Moment1 * llSin(Ang0 - Ang1)) / C0;
         float pl1xM0 = l1 * Moment0;
         float pl0xM1 = l0 * Moment1;
         float C2 =
-//            ((m1 * llPow((l1 * Moment0), 2) +
             ((m1 * (pl1xM0 * pl1xM0) +
-//            (m0 + m1) * llPow((l0 * Moment1), 2) -
             (m0 + m1) * (pl0xM1 * pl0xM1) -
             2 * l0 * l1 * m1 * Moment0 * Moment1 * llCos(Ang0 - Ang1)) *
-//            llSin(2 * (Ang0 - Ang1))) / (2 * llPow(C0, 2));
             llSin(2 * (Ang0 - Ang1))) / (2 * (C0 * C0));
         float F_Ang0 =
           (l1 * Moment0 - l0 * Moment1 * llCos(Ang0 - Ang1)) / (l0 * C0);
@@ -486,9 +413,7 @@ tawk("Gaaak!  " + pname);
 
     setMoments() {
         float commonVal = m1 * l0 * l1 * llCos(ang0 - ang1);
-//        moment0 = (m0 + m1) * llPow(l0, 2) * v0 + v1 * commonVal;
         moment0 = (m0 + m1) * (l0 * l0) * v0 + v1 * commonVal;
-//        moment1 = m1 * llPow(l1, 2) * v1 + v0 * commonVal;
         moment1 = m1 * (l1 * l1) * v1 + v0 * commonVal;
     }
 
@@ -503,14 +428,10 @@ tawk("Gaaak!  " + pname);
         if (scaleHeight < scale) {
             scale = scaleHeight;
         }
-//tawk("scaleHeight " + (string) scaleHeight + "  scale " + (string) scale);
 
-        x0 = scaleWidth / 2;
-        y0 = scaleHeight / 2;
-x0 = y0 = 0;
+        x0 = y0 = 0;
         ang0 = ang1 = v0 = v1 = acc0 = acc1 = 0;
-//        l0 = l1 = scale / 4.5;
-l0 = l1 = 50;
+        l0 = l1 = 50;
         m0 = m1 = 100;
         g = 0.1;
         massScaleFactor = speedScaleFactor = 1.2;
@@ -569,28 +490,16 @@ l0 = l1 = 50;
             rotation rr = llGetRot();
             vector rlbob = (lbob * rr) + rp;
             vector rllbob = (llbob * rr) + rp;
-/*
-            flPlotLine(rllbob, rlbob, llList2Vector(llGetLinkPrimitiveParams(bob2,
-                [ PRIM_COLOR, ALL_SIDES ]), 0), 0.01);
-*/
-//plotterNo = 0;
             llMessageLinked(LINK_THIS, LM_PL_DRAW,
-/*
-                llList2CSV([ rllbob, rlbob,
-                    llList2Vector(llGetLinkPrimitiveParams(bob2,
-                        [ PRIM_COLOR, ALL_SIDES ]), 0), 0.01, flPlotPerm, plotterNo ]),
-*/
-fv(rllbob) + fv(rlbob) + fv(llList2Vector(llGetLinkPrimitiveParams(bob2,
-                        [ PRIM_COLOR, ALL_SIDES ]), 0)) + fuisWid +
-                        llChar(48 + flPlotPerm) + (string) (plotterNo + 1),
-                    whoDat);
+                fv(rllbob) + fv(rlbob) + fv(llList2Vector(llGetLinkPrimitiveParams(bob2,
+                    [ PRIM_COLOR, ALL_SIDES ]), 0)) + fuisWid +
+                    llChar(48 + flPlotPerm) + (string) (plotterNo + 1),
+                whoDat);
             plotterNo = (plotterNo + 1) % linePlotters;
         }
-//else { tawk("lbob " + (string) lbob + " llbob " + (string) llbob); }
         llbob = lbob;
         if (sit) {
             llMessageLinked(bob2, LM_BO_MOVE, "", NULL_KEY);
-//tawk("Send move");
         }
     }
 
@@ -598,7 +507,10 @@ fv(rllbob) + fv(rlbob) + fv(llList2Vector(llGetLinkPrimitiveParams(bob2,
 
     updateModel() {
         move(ang0, ang1, moment0, moment1, dt);
-        displayModel();
+        if (--tock <= 0) {
+            displayModel();
+            tock = tockCount;
+        }
     }
 
     //  updateBobs  --  Update bobs when mass changes
@@ -629,21 +541,12 @@ fv(rllbob) + fv(rlbob) + fv(llList2Vector(llGetLinkPrimitiveParams(bob2,
         float dia = globalScale * 1.1;
         llSetLinkPrimitiveParamsFast(globe,
             [ PRIM_SIZE, < dia, dia, 0.05 * globalScale > ]);
-//        plinthSize *= globalScale;
-//        plinthSize.y = 0.05;
         llSetLinkPrimitiveParamsFast(plinth,
             [ PRIM_SIZE, plinthSize * globalScale,
               PRIM_POS_LOCAL, plinthPos * globalScale ]);
-llLinkSitTarget(plinth,
-    < 0, -0.4, dia + (0.25 * globalScale) + 0.4 >
-//        * llList2Rot(llGetLinkPrimitiveParams(plinth, [ PRIM_ROT_LOCAL ]), 0)
-    ,
-    llEuler2Rot(<0, 0, -PI_BY_TWO>));
-//llSetLinkCamera(plinth, ZERO_VECTOR, ZERO_VECTOR);
-/*
-llLinkSitTarget(globe, ZERO_VECTOR, ZERO_ROTATION);
-llSitTarget(ZERO_VECTOR, ZERO_ROTATION);
-*/
+        llLinkSitTarget(plinth,
+            < 0, -0.4, dia + (0.25 * globalScale) + 0.4 >,
+            llEuler2Rot(<0, 0, -PI_BY_TWO>));
     }
 
     //  sendSettings  --  Send settings to other scripts
@@ -698,7 +601,6 @@ llSitTarget(ZERO_VECTOR, ZERO_ROTATION);
             tawk(prefix + message);                 // Echo command to sender
         }
 
-//        string lmessage = llToLower(llStringTrim(message, STRING_TRIM));
         string lmessage = fixArgs(llToLower(message));
         list args = llParseString2List(lmessage, [" "], []);    // Command and arguments
         integer argn = llGetListLength(args);       // Number of arguments
@@ -733,6 +635,7 @@ llSitTarget(ZERO_VECTOR, ZERO_ROTATION);
         /*  Channel n                   Change command channel.  Note that
                                         the channel change is lost on a
                                         script reset.  */
+
         } else if (abbrP(command, "ch")) {
             integer newch = (integer) llList2String(args, 1);
             if ((newch < 2)) {
@@ -777,15 +680,22 @@ llSitTarget(ZERO_VECTOR, ZERO_ROTATION);
         //  Run on/off              Start / stop simulation
 
         } else if (abbrP(command, "ru")) {
+            runEndTime = -1;
             if (argn >= 2) {
+                if (llSubStringIndex("0123456789.", llGetSubString(sparam, 0, 0)) >= 0) {
+                    runEndTime = llGetTime() + ((float) sparam);
+                    sparam = "on";
+                }
                 running = onOff(sparam);
             } else {
                 running = !running;
             }
             if (running) {
                 llSetTimerEvent(timerTick);
+                scriptSuspend = TRUE;
             } else {
                 llSetTimerEvent(0);
+                scriptResume();
             }
 
         //  Set                     Set parameter
@@ -949,7 +859,11 @@ llSitTarget(ZERO_VECTOR, ZERO_ROTATION);
                 //  Set scale n
 
                 } else if (abbrP(sparam, "sc")) {
-                    globalScale = (float) svalue;
+                    if (llGetSubString(svalue, -1, -1) == "x") {
+                        globalScale *= (float) llGetSubString(svalue, 0, -2);
+                    } else {
+                        globalScale = (float) svalue;
+                    }
                     updateGlobe();
                     updateBobs();
                     displayModel();
@@ -961,6 +875,11 @@ llSitTarget(ZERO_VECTOR, ZERO_ROTATION);
                     if (running) {
                         llSetTimerEvent(timerTick);
                     }
+
+                //  Set tock n
+
+                } else if (abbrP(sparam, "to")) {
+                    tockCount = (integer) svalue;
 
                 //  Set trace on/off
 
@@ -1034,8 +953,6 @@ llSitTarget(ZERO_VECTOR, ZERO_ROTATION);
 
             globe = findLinkNumber("Globe");
             plinth = findLinkNumber("Plinth");
-//tawk("Bob1 " + (string) bob1 + " bob2 " + (string) bob2 + " rod1 " + (string) rod1 +
-//    " rod2 " + (string) rod2 + " globe " + (string) globe + " plinth " + (string) plinth);
 /*
 integer i;
 for (i = 0; i <= 7; i++) {
@@ -1053,7 +970,6 @@ for (i = 0; i <= 7; i++) {
                         INVENTORY_SCRIPT) {
                 linePlotters++;
             }
-tawk("Found " + (string) linePlotters + " line plotters.");
 
             llLinkParticleSystem(bob2, [ ]);
             clearPaths();
@@ -1138,24 +1054,12 @@ tawk("Found " + (string) linePlotters + " line plotters.");
         changed(integer change) {
             key seated = llAvatarOnLinkSitTarget(bob2);
             if (change & CHANGED_LINK) {
-/*
-llOwnerSay("Change link.  Prims " + (string) llGetNumberOfPrims());
-integer i;
-for (i = 0; i < llGetNumberOfPrims(); i++) {
-    key k = llAvatarOnLinkSitTarget(i);
-    if (k != NULL_KEY) {
-        tawk("On " + (string) i + " " + (string) k);
-    }
-}
-*/
                 if ((seated == NULL_KEY) && sit) {
                     //  Avatar has stood up, departing
                     sit = FALSE;
-//llOwnerSay("Stood main");
                 } else if ((!sit) && (seated != NULL_KEY)) {
                     //  Avatar has sat on the bob
                     sit = TRUE;
-//llOwnerSay("Sat main");
                 }
             }
         }
@@ -1163,6 +1067,13 @@ for (i = 0; i < llGetNumberOfPrims(); i++) {
         //  The timer event handles updates while animating
 
         timer() {
-            updateModel();
-        }
+           updateModel();
+            if (runEndTime >= 0) {
+                if (llGetTime() >= runEndTime) {
+                    running = FALSE;
+                    llSetTimerEvent(0);
+                    scriptResume();
+                }
+            }
+         }
     }

@@ -143,3 +143,17 @@ off, but it's much faster than before.
 Replaced all of the calls in the main script that squared numbers using
 llPow() with simple multiplication of the two quantities.
 
+Added the "Set scale nX" feature to multiply the current scale factor
+by a number, allowing Bigger and Smaller buttons in menus.
+
+Added the ability to specify a run time in seconds on the Run command,
+for example "Run 30".  The Run command now suspends script execution
+until it completes, either by a manual Run off or reaching the end of
+the specified run time.
+
+Added a "Set tock n" command which controls how frequently the model is
+updated in terms of ticks running the integrator.  This can make the
+motion more jerky, but when running with time-consuming operations such
+as Set paths lines it makes the simulation run faster.  Anything much
+more than 3 is pretty jerky, however.
+
