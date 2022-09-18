@@ -1,0 +1,145 @@
+
+                        Fourmilab Double Pendulum
+
+                            Development Log
+
+2022 September 16
+
+Added code to updateBobs() and placeRod() to scale the diameter of the
+hub, bobs, and edges by globalScale so they're appropriate to the scale
+of the model as a whole.  If you scale down too far, you'll run into
+the minimum prim dimension, however, and the mechanism will look "fat"
+with respect to its size.
+
+Added the ability for avatars to sit on the lower bob.  A sit anywhere
+on the object directs the avatar to a sit target on the lower bob.
+The sit is detected both in the main script and in a script in the bob.
+When an avatar is sitting, the main script sends a LM_BO_MOVE message
+to the bob whenever it moves, and the bob adjusts the position of the
+avatar so it moves along with the bob.
+
+Integrated the Script Processor and Menu Processor.  They work exactly
+as they do in other Fourmilab applications.
+
+Removed the Edge script from the rod objects.  As they are manipulated
+directly from the main script, they no longer need their own scripts.
+
+Reset the initial length setting of both rods to the arbitrary number
+50.  Set the lengths as you wish; the display scale of the pendulum
+will be adjusted to fill the case.
+
+Add the settings for masses, rod lengths, gravity, and scale to the
+Status command output.
+
+Modified updateGlobe so the thickness of the case and plinth are
+scaled with globalScale along with their height and width.
+
+Added a Set case on/off command to show or hide the display case.
+Note that hiding the display case does not keep it from being selected
+if you right click on where it remains as part of the model.
+
+2022 September 17
+
+After a huge amount of confusion and suffering, I have sitting on the
+model working basically as I intend it to.  The main pitfall here is
+naively assuming that the "link numbers" Firestorm shows you when
+you're editing a linkset object have anything at all to do with the
+actual link numbers by which links referenced within scripts.  They
+don't. Now, usually I can ignore link numbers because I use the
+Fourmilab findLinkNumber() function to find links by object name and
+store them in variables within the script, but there are some dark
+corners in LSL where absolute link numbers matter, for example in sit
+targets where, when the user clicks on a link which has no explicit sit
+target, it directs the avatar to the link with the smallest link number
+that has a vacant seat. In this case, absolute link numbers matter--a
+lot--and when Firestorm is lying to you about them, you can waste a
+huge amount of time trying to figure out what is going on.
+
+I finally added diagnostic code that printed to association between
+actual link numbers and object names and traced link numbers through
+the avatar sit process and figured out what was happening.
+
+The second thing is that when working with highly dynamic mechanical
+models, the wisest course is to pay no attention at all to the silly
+"sit position" associated with a prim.  Now, you need to set this to
+something nonzero in order to cause the prim to be a sit target, but
+trying to maintain it as the prim twists and turns is a fool's errand.
+The best approach is to set it to something innocuous and then, when
+you get the changed CHANGED_LINK event when a user sits on the prim,
+immediately override the avatar's position and rotation with the same
+code you use to move and orient the avatar as the prim moves withing
+the linkset.  This will save you a vast amount of confusion and
+suffering.
+
+Confirmed that the transformations for sit on the moving bob acccount
+for global rotation of the root prim of the linkset.
+
+Confirmed that static sitting on the top of the case by sitting on
+the plinth (or when the bob seat is occupied) handles global rotation
+of the root prim.
+
+You can even rotate the object while an avatar is sitting on the bob
+and as soon as you confirm the rotation, the avatar will resume sitting
+on the bob in its new rotation plane.
+
+Made the generation of particle system paths and temporary prim trails
+following the lower bob use the colour of that bob, as set by "Set
+colour" instead of a hard-coded colour.  Because of the way particle
+systems work, the colour is bound at the time the particle emission is
+started and will not change if the bob colour changes unless the
+particle system is restarted with "Set path on".  When generating
+temporary prim trails with "Set path lines", a change to the colour of
+the bob immediately changes the colour of the trail.
+
+Added new options to "Set paths lines".  If you specify "permanent"
+after "lines", the lines will be traced with permanent prims, not the
+usual temporary prims.  These count against land impact, and it makes
+a lot of them, to be careful!  These prims are not erased when you Set
+paths off.  To delete them, use "Set paths lines clear", which will send
+a message telling them to self-destruct.
+
+Inserted and ran code to use llSetLinkCamera to clear out some camera
+positions on links that shouldn't have been there and were messing up
+camera positioning when sitting on the plinth.  This code has now been
+commented out, but I've kept it around in case there should be another
+link mix-up that requires running it again.
+
+Enabling "Set plot lines" caused the simulation to slow to a crawl
+because llRezObject() delays a script by 100 milliseconds on every
+call.  But since is a delay of an individual script, we can create a
+farm of plotter scripts and use them as separate processes to speed up
+total throughput.  So that's what we do.  I created 12 instance of a
+script called "Line plotter n", where n goes from 1 to 12.
+displayModel() in the main script now, rather than calling flPlotLine()
+directly, sends a LM_PL_DRAW link message containing its arguments, the
+flPlotPerm flag to indicate whether the line is temporary or permanent,
+and a plotter ID number which increments on each call modulo 12 (or
+however many plotters scripts have been placed in the inventory).
+Since our fastest tick time is 0.01 seconds, 12 scripts should be
+enough so that each, suffering the 0.1 second delay for each vector,
+one is always ready and we never fill up the link message queue and
+lose path segments.  (If we need more, I'll just add them.)
+
+I was originally thinking of a fancy scheme where server processes sent
+messages to indicate they were ready and the simulation waited for one
+if none was ready, but this seems to work just fine and avoids all the
+complexity.
+
+One salutary side-effect of this is that removing flPlotLine, which is
+rather long and involved, to an external script reduced memory usage in
+the main script from 80% to 76%.
+
+2022 September 18
+
+Integrated the fuis() and suif() floating point encoders and decoders
+from Orbits into the code that sends parameters from the main script to
+the line plotters.  This not only preserves full precision (for what
+it's worth, in single precision) but is much faster than converting to
+and from decimal with llList2CSV() and back.  This should reduce the
+overhead for generating line paths in the main script to the mininum.
+You can still see the difference compared to when line paths are turned
+off, but it's much faster than before.
+
+Replaced all of the calls in the main script that squared numbers using
+llPow() with simple multiplication of the two quantities.
+
