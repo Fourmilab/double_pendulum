@@ -1,0 +1,9 @@
+Simulation of a double pendulum mechanical system
+
+All parameters (masses, lengths, gravity) can be changed
+
+Fully scriptable via notecards, define custom menus
+
+Trace chaotic motion paths
+
+Full permissions, including script source code

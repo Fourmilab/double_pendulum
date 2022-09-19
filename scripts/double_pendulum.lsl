@@ -677,7 +677,7 @@ tawk("Gaaak!  " + pname);
             resetModel();
             displayModel();
 
-        //  Run on/off              Start / stop simulation
+        //  Run on/off/time             Start / stop simulation
 
         } else if (abbrP(command, "ru")) {
             runEndTime = -1;

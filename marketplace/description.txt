@@ -1,0 +1,19 @@
+Fourmilab Double Pendulum is a physical model of a double pendulum system in which two masses (“bobs”) swing on frictionless bearings on rods, with the first mass connected to a fixed hub and the second mass swinging freely beneath the first.  This simple system exhibits extraordinarily complicated and chaotic motion, which varies dramatically as parameters of the system (masses of the bobs, lengths of the rods, initial displacements of the masses) are varied. Fourmilab Double Pendulum models an ideal double pendulum system, with no friction or air resistance, and allows you to change the parameters of the model and observe the results.  Facilities allow tracking the chaotic motion of the lower bob, displaying its path as the system evolves. The model is fully scriptable with commands supplied in notecards in its inventory and scripts may define pop-up menus through which an avatar may interact with the model.
+
+Land Impact and Permissions
+
+Fourmilab Double Pendulum has a land impact of 7.  To rez it, you must have land on which you are permitted to create objects (land you own, whose owner has granted you permission, or a public sandbox).  The creation of lines to trace the path of the pendulum bob creates temporary prims which, while they do not count against land impact, do require the owner of the object to have permission to create objects on the land where it resides.
+
+Development Kit
+
+Fourmilab Tesseract is delivered including a development kit containing all of the object components, models, scripts, and documents used in the objects.  All items including scripts, have “full permissions” (copy, modify, and transfer), so that you can use them as the basis for your own development projects and/or share them with other users in Second Life.
+
+Source code for this project is maintained on and available from the GitHub repository:
+    https://github.com/Fourmilab/double_pendulum
+
+License
+
+This product (software, documents, images, and original models) is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+    http://creativecommons.org/licenses/by-sa/4.0/
+    https://creativecommons.org/licenses/by-sa/4.0/legalcode
+You are free to copy and redistribute this material in any medium or format, and to remix, transform, and build upon the material for any purpose, including commercially.  You must give credit, provide a link to the license, and indicate if changes were made.  If you remix, transform, or build upon this material, you must distribute your contributions under the same license as the original.

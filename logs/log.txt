@@ -157,3 +157,19 @@ motion more jerky, but when running with time-consuming operations such
 as Set paths lines it makes the simulation run faster.  Anything much
 more than 3 is pretty jerky, however.
 
+2022 September 19
+
+Made an animated GIF for the Marketplace listing, stored in the
+repository at marketplace/images/double_pendulum.gif.  I recorded a
+video with vokoscreenNG using a window size of 800x600.  I loaded the
+resulting dp.mkv file into OpenShot, scaled to eliminate the frame
+captured by vokoscreen, and exported as dp.mp4, an 800x600 MP4/H.264
+video at 12 frames per second (advanced/custom settings).  This was
+then run through ffmpeg with crop settings (-t and -ss options) to
+encode an extract at 700x525 pixels which was less than the maximum 1
+Mb which can be uploaded to the Marketplace:
+    ffmpeg -i dp.mp4 -t 9.5 -ss 30 -filter_complex \
+        "[0:v] fps=12,scale=700:-1,split [a][b];[a] palettegen [p];[b][p] paletteuse" double_pendulum.gif
+
+Made images for the Marketplace listing, stored in repository directory
+marketplace/images.
