@@ -114,7 +114,7 @@
                 return i;
             }
         }
-tawk("Gaaak!  " + pname);
+//tawk("Gaaak!  " + pname);
         return -1;
     }
 
@@ -677,13 +677,17 @@ tawk("Gaaak!  " + pname);
             resetModel();
             displayModel();
 
-        //  Run on/off/time             Start / stop simulation
+        //  Run on/off/time/async   Start / stop simulation
 
         } else if (abbrP(command, "ru")) {
+            integer sync = TRUE;
             runEndTime = -1;
             if (argn >= 2) {
                 if (llSubStringIndex("0123456789.", llGetSubString(sparam, 0, 0)) >= 0) {
                     runEndTime = llGetTime() + ((float) sparam);
+                    sparam = "on";
+                } else if (abbrP(sparam, "as")) {
+                    sync = FALSE;
                     sparam = "on";
                 }
                 running = onOff(sparam);
@@ -692,7 +696,7 @@ tawk("Gaaak!  " + pname);
             }
             if (running) {
                 llSetTimerEvent(timerTick);
-                scriptSuspend = TRUE;
+                scriptSuspend = sync;
             } else {
                 llSetTimerEvent(0);
                 scriptResume();
@@ -709,11 +713,11 @@ tawk("Gaaak!  " + pname);
                 integer n = bobNo(svalue);
                 if (n > 0) {
                     if (argn >= 4) {
-                        float ang = fixangr(llList2Float(args, 3) * DEG_TO_RAD);
+                        float ang = llList2Float(args, 3) * DEG_TO_RAD;
                         if (n == 1) {
-                            ang0 = ang;
+                            ang0 = fixangr(PI - ang);
                         } else {
-                            ang1 = ang;
+                            ang1 = fixangr(PI + ang);
                         }
                         displayModel();
                     } else {
@@ -845,13 +849,31 @@ tawk("Gaaak!  " + pname);
                               PSYS_SRC_PATTERN, PSYS_SRC_PATTERN_DROP,
                               PSYS_PART_START_COLOR, pcol,
                               PSYS_PART_END_COLOR, pcol,
-                              PSYS_PART_START_SCALE, <0.05, 0.4, 1>,
-                              PSYS_PART_END_SCALE, <0.05, 0.4, 1>,
+                              PSYS_PART_START_SCALE, <0.0625, 0.4, 1>,
+                              PSYS_PART_END_SCALE, <0.0625, 0.4, 1>,
                               PSYS_SRC_MAX_AGE, 0,
                               PSYS_PART_MAX_AGE, 20,
                               PSYS_SRC_BURST_RATE, 0,
                               PSYS_SRC_BURST_PART_COUNT, 500
                             ]);
+/*
+                        llLinkParticleSystem(bob2,
+                            [ PSYS_PART_FLAGS,
+                              PSYS_PART_EMISSIVE_MASK |
+                                PSYS_PART_INTERP_COLOR_MASK ,
+                              PSYS_SRC_PATTERN, PSYS_SRC_PATTERN_DROP,
+                              PSYS_PART_START_COLOR, <1, 1, 1>,
+                              PSYS_PART_END_COLOR, <1, 0, 0>,
+                              PSYS_PART_START_ALPHA, 1,
+                              PSYS_PART_END_ALPHA, 0.25,
+                              PSYS_PART_START_SCALE, <0.03125, 0.03125, 1>,
+                              PSYS_PART_END_SCALE, <0.03125, 0.03125, 1>,
+                              PSYS_SRC_MAX_AGE, 0,
+                              PSYS_PART_MAX_AGE, 30,
+                              PSYS_SRC_BURST_RATE, 0,
+                              PSYS_SRC_BURST_PART_COUNT, 500
+                            ]);
+*/
                     } else {
                         llLinkParticleSystem(bob2, [ ]);
                     }
@@ -915,8 +937,9 @@ tawk("Gaaak!  " + pname);
             llMessageLinked(LINK_THIS, LM_MP_STAT, "", id);
 
         //  Test                        Run test
-
+/*
         } else if (abbrP(command, "te")) {
+*/
 
         //    Commands processed by other scripts
         //  Script                  Script commands
@@ -944,7 +967,8 @@ tawk("Gaaak!  " + pname);
             owner = whoDat = llGetOwner();
             ownerName =  llKey2Name(owner);  //  Save name of owner
 
-            llSetText("Double Pendulum\n/" + (string) commandChannel, < 0, 1, 0 >, 1);
+//          llSetText("Double Pendulum\n/" + (string) commandChannel, < 0, 1, 0 >, 1);
+llSetText("", ZERO_VECTOR, 0);
 
             bob1 = findLinkNumber("Bob 1");
             bob2 = findLinkNumber("Bob 2");

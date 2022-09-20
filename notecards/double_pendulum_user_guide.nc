@@ -39,8 +39,8 @@ SITTING ON THE PENDULUM
 You can sit on the lower bob and move with it as it swings by right
 clicking anywhere on the model except the wooden base and selecting
 “Sit Here”. Sitting on the wooden base will cause you to sit statically
-stop the model.  If one avatar is already sitting on the pendulum bob
-and a second tries to sit there, they will seated atop the model.
+atop the model.  If one avatar is already sitting on the pendulum bob
+and a second tries to sit there, the second will be seated on top.
 
 CHAT COMMANDS
 
@@ -145,14 +145,20 @@ and lower case.)
         angle”.  Use this when you want to compare the evolution of
         the model as you change masses and rod lengths.
 
-    Run on/off/time
+    Run on/off/time/asynchronous
         Starts or stops an animation in which the model is updated
         every time tick (see “Set tick” and “Set tock” below).  If a
         number is specified instead of “on” or “off”, the animation
         will run for that number of seconds and stop automatically.
         Execution of commands from a script is suspended while an
         animation is in progress, so you can use timed Run commands in
-        a script to demonstrate different parameters.
+        a script to demonstrate different parameters.  If
+        “asynchronous” is specified (as always, you can abbreviate this
+        to as few as two characters), the simulation will be started
+        for an indefinite period but a script that submits the command
+        will not be paused.  This allows building menu systems that
+        permit a user to change parameters while a simulation is
+        running and see the effects immediately.
 
     Script
         These commands control the running of scripts stored in

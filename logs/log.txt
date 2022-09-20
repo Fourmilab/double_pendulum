@@ -173,3 +173,46 @@ Mb which can be uploaded to the Marketplace:
 
 Made images for the Marketplace listing, stored in repository directory
 marketplace/images.
+
+Updated Configuration script to just show how to run the Demonstration
+script.
+
+Removed text legend for production version.
+
+Modified the Set angle command so angles are reckoned as for compass
+bearings, with 0 degrees north (positive Z axis), 90 degrees east
+(positive X axis), etc.  Previously, 0 degrees was south and, to make
+things even more confusing, the sign of angles was different for bobs 1
+and 2.
+
+Experimented with an alternative particle system for Set paths on. This
+drops circular particles of the smallest possible size (0.03125)
+without trying to connect them into a ribbon, which has a bunch of
+problems.  This also has compromises: when the bob is moving quickly,
+it makes disconncted dots which may not be obviously connected.  To
+make it easier to interpret the trail, I made the path initially drawn
+in white, then "decay" to red over the 30 second lifetime of the
+particles.  I'm not sure which I prefer: I make make both available as
+an option on Set path.
+
+2022 September 20
+
+As an experiment, tried installing the Polychrome script in flPlotLine
+segments to make them randomly change colours.  Running all those
+scripts and their sending frequent colour changes to the viewer caused
+the simulation and/or viewer to grind to a halt, resulting in loss of
+link messages to the line plotters and incomplete updates of the model.
+I ripped this code right out again.
+
+On further reflection, I decided that the dot dropping particle system
+does a worse job than the ribbon.  Neither really looks good or does a
+nice job tracing the path, but the ribbon is a little better so I've
+re-enabled it.  I left the alternative code in, commented out, in case
+I have any more bright ideas to try.
+
+To support menu systems which permit the user to vary settings while a
+simulation is running, added a "Run asynchronous" option, which starts
+the simulation but does not pause a running script that submits it. A
+script (or, more usually, a menu) may start the simulation with this
+option and then, while it's running, allow the user to change
+simulation parameters from subsequent menu picks.
