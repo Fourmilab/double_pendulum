@@ -249,10 +249,18 @@ and lower case.)
     Set
         Set a variety of parameters.
 
-        Set case on/off
+        Set case on/off/hat
             Shows (“on”) or hides (“off”) the wooden base and glass
             display case containing the model.  This only controls
             appearance and does not affect the simulation in any way.
+            Setting case to “hat” configures the object to be worn as
+            a hat: it sets scale to 0.3, rotates the model to be
+            vertical when attached to the skull, adjusts the position
+            to be around the top of a typical head, and hides the
+            wooden base.  To wear, select and attach to Skull.
+            Depending on the size and shape of your head and hair, you
+            may need to adjust the position of the hat with the viewer
+            Edit facility after attaching.
 
         Set colour component <R, G, B> [ alpha ]
             Sets the colour and optional transparency of components of

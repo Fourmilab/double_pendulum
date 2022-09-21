@@ -7,7 +7,7 @@
     key owner;                          //  Owner UUID
     string ownerName;                   //  Name of owner
 
-    integer commandChannel = 9;// 1993;      // Command channel in chat
+    integer commandChannel = 99;// 1993;      // Command channel in chat
     integer commandH;                   // Handle for command channel
     key whoDat = NULL_KEY;              // Avatar who sent command
     integer restrictAccess = 2;         // Access restriction: 0 none, 1 group, 2 owner
@@ -539,8 +539,16 @@
         vector plinthSize = < 0.86, 0.05, 0.5 >;
         vector plinthPos = < 0, -0.788, 0 >;
         float dia = globalScale * 1.1;
+        float mmax = m0;
+        if (m1 > m0) {
+            mmax = m1;
+        }
+        float gthick = 0.05 * llSqrt(mmax / 100) * 1.05;
+        if (gthick < 0.05) {
+            gthick = 0.05;
+        }
         llSetLinkPrimitiveParamsFast(globe,
-            [ PRIM_SIZE, < dia, dia, 0.05 * globalScale > ]);
+            [ PRIM_SIZE, < dia, dia, gthick * globalScale > ]);
         llSetLinkPrimitiveParamsFast(plinth,
             [ PRIM_SIZE, plinthSize * globalScale,
               PRIM_POS_LOCAL, plinthPos * globalScale ]);
@@ -727,12 +735,28 @@
                     return FALSE;
                 }
 
-                //  Set case on/off
+                //  Set case on/off/hat
 
                 } else if (abbrP(sparam, "ca")) {
-                    float alpha = onOff(svalue);
+                    float alpha;
+                    float palpha;
+                    if (abbrP(svalue, "ha")) {
+                        alpha = 1;
+                        palpha = 0;
+                        llSetLinkPrimitiveParamsFast(LINK_ROOT,
+                            //  It's magic numbers time!
+                            [ PRIM_POSITION, <0, -0.0069, 0.25659>,
+                              PRIM_ROTATION, llEuler2Rot(<PI_BY_TWO, 0, 0>) ]);
+                        globalScale = 0.3;
+                        updateGlobe();
+                        updateBobs();
+                        displayModel();
+                        llSetObjectName(llGetObjectName() + " Hat");
+                    } else {
+                        alpha = palpha = onOff(svalue);
+                    }
                     llSetLinkAlpha(globe, alpha * 0.25, ALL_SIDES);
-                    llSetLinkAlpha(plinth, alpha, ALL_SIDES);
+                    llSetLinkAlpha(plinth, palpha, ALL_SIDES);
 
                 //  Set colour 1/2/3/4 <r, g, b> [ alpha ]
 
@@ -805,6 +829,7 @@
                             } else {
                                 m1 = m;
                             }
+                            updateGlobe();
                             updateBobs();
                             displayModel();
                         } else {

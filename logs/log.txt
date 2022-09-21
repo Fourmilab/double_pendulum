@@ -216,3 +216,19 @@ the simulation but does not pause a running script that submits it. A
 script (or, more usually, a menu) may start the simulation with this
 option and then, while it's running, allow the user to change
 simulation parameters from subsequent menu picks.
+
+2022 September 21
+
+Added a "Set case hat" option that configures the object to be worn as
+a hat.  It sets scale to 0.3, hides the plinth while leaving the disc
+visible, rotates the disc 90 degrees from its original position around
+the X axis so it stands vertically when attached to the skull, shifts
+the disc upward to clear the head, and appends " Hat" to the name of
+the object.
+
+Added code to updateGlobe() to automatically scale the thickness of the
+disc based upon the larger of the two masses so that the sphere masses
+will fit within the mass and not protrude if set very large.  The
+thickness is fixed at a minimum of 0.05 times the global scale factor
+if the masses are smaller than the value which would correspond to that
+size.  The thickness of the plinth is not adjusted.
