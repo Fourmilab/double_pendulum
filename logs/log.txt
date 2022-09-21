@@ -232,3 +232,17 @@ will fit within the mass and not protrude if set very large.  The
 thickness is fixed at a minimum of 0.05 times the global scale factor
 if the masses are smaller than the value which would correspond to that
 size.  The thickness of the plinth is not adjusted.
+
+Logged on to github.com.
+
+Created a new repository:
+    double_pendulum
+with access URLs:
+    HTTPS: https://github.com/Fourmilab/double_pendulum.git
+    SSH:   git@github.com:Fourmilab/double_pendulum.git
+
+Linked the local repository to the GitHub archive:
+    git remote add origin git@github.com:Fourmilab/double_pendulum.git
+
+Confirmed that my local "git sync" command works with the remote
+repository.
