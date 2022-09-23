@@ -4,7 +4,7 @@ Fourmilab Double Pendulum is a physical model of a double pendulum
 system in which two masses (“bobs”) swing on frictionless bearings on
 rods, with the first mass connected to a fixed hub and the second mass
 swinging freely beneath the first.  This simple system exhibits
-extraordinarily complicated and chaotic motion, which varies
+extraordinarily complicated and chaotic motion, which changes
 dramatically as parameters of the system (masses of the bobs, lengths
 of the rods, initial displacements of the masses) are varied. Fourmilab
 Double Pendulum models an ideal double pendulum system, with no

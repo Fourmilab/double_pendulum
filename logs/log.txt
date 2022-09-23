@@ -246,3 +246,14 @@ Linked the local repository to the GitHub archive:
 
 Confirmed that my local "git sync" command works with the remote
 repository.
+
+2022 September 22
+
+The "Reset" command reset the masses of the bobs but did not update
+the case thickness and bob sizes to reflect the reset of masses.
+Fixed.
+
+2022 September 23
+
+To extract the audio track from a recording make with vokoscreen:
+    ffmpeg -i recording.mkv -vn -acodec copy audio_track.ogg

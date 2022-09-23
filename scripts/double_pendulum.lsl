@@ -683,6 +683,8 @@
 
         } else if (abbrP(command, "re")) {
             resetModel();
+            updateGlobe();
+            updateBobs();
             displayModel();
 
         //  Run on/off/time/async   Start / stop simulation
