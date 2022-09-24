@@ -292,5 +292,9 @@ Guide.  The on_rez() handler does not reset the script if the object
 name contains the substring " Hat", which allows the preconfiguration
 of the Hat version to be preserved when it is attached.
 
+The Channel command contained some legacy code that set the object
+floating text to the name of object from which we inherited it.
+Removed.
+
 Release v1.0 listed in Marketplace.  Made YouTube video public.
 Included this log in the Development Kit folder of the product.

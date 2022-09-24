@@ -653,7 +653,6 @@
                 llListenRemove(commandH);
                 commandChannel = newch;
                 commandH = llListen(commandChannel, "", NULL_KEY, "");
-                llSetText("Edge Factory\n/" + (string) commandChannel, < 0, 1, 0 >, 1);
                 tawk("Listening on /" + (string) commandChannel);
             }
 
