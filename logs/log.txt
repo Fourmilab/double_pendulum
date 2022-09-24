@@ -283,3 +283,6 @@ Marketplace listing.
 Verified that the Hat version works in a region where the wearer
 doesn't have rez permission (except for Set path lines) and that the
 Hat continues to run across a teleport between regions.
+
+Release v1.0 listed in Marketplace.  Made YouTube video public.
+Included this log in the Development Kit folder of the product.
