@@ -7,7 +7,7 @@
     key owner;                          //  Owner UUID
     string ownerName;                   //  Name of owner
 
-    integer commandChannel = 99;// 1993;      // Command channel in chat
+    integer commandChannel = 1993;      // Command channel in chat
     integer commandH;                   // Handle for command channel
     key whoDat = NULL_KEY;              // Avatar who sent command
     integer restrictAccess = 2;         // Access restriction: 0 none, 1 group, 2 owner

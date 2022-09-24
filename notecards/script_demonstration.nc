@@ -5,10 +5,11 @@
 @echo chaotic motion of a a pendulum made of two
 @echo linked masses free to rotate in a plane.
 
+script set segment "30"
 script pause 2
 set scale 2
 reset
-run 15
+run {segment}
 
 @echo
 @echo Commands give you full control over the model.
@@ -17,7 +18,7 @@ run 15
 @echo
 reset
 set mass 1 150
-run 15
+run {segment}
 
 @echo
 @echo Now try it with a larger red bob and green back to
@@ -26,25 +27,25 @@ run 15
 reset
 set mass 1 100
 set mass 2 150
-run 15
+run {segment}
 
 @echo
 @echo Let's try a configuration with equal masses and a
 @echo longer first rod and shorter second rod.
 @echo
-set mass 1 50
-set mass 2 50
+reset
 set length 1 300
 set length 2 100
-run 15
+run {segment}
 
 @echo
 @echo Turnabout's fair play.  What happens when we flip
 @echo the lengths of the two rods?
 @echo
+reset
 set length 1 100
 set length 2 300
-run 15
+run {segment}
 
 @echo
 @echo Trace path of second bob by drawing temporary
@@ -52,7 +53,7 @@ run 15
 @echo
 reset
 set paths lines
-run 30
+run {segment}
 set paths off
 
 @echo
@@ -62,7 +63,7 @@ reset
 set angle 1 1
 set angle 2 -1
 set paths on
-run 30
+run {segment}
 set paths off
 
 @echo
@@ -71,21 +72,21 @@ set paths off
 @echo
 reset
 set angle 1 0
-script pause 0.25
+script pause 0.5
 set angle 1 45
-script pause 0.25
+script pause 0.5
 set angle 1 90
-script pause 0.25
+script pause 0.5
 set angle 1 180
-script pause 0.25
+script pause 0.5
 set angle 1 270
-script pause 0.25
+script pause 0.5
 set angle 2 0
-script pause 0.25
+script pause 0.5
 set angle 2 45
-script pause 0.25
+script pause 0.5
 set angle 2 90
-script pause 0.25
+script pause 0.5
 set angle 2 180
 run asynchronous
 script pause 5
@@ -121,7 +122,7 @@ reset
 set angle 1 30
 set angle 2 30
 set gravity 0.005
-run 25
+run {segment}
 script pause 1
 @echo
 @echo High gravity simulation
@@ -130,8 +131,8 @@ reset
 set angle 1 30
 set angle 2 30
 set gravity 0.5
-script pause 2
-run 25
+script pause 5
+run {segment}
 
 reset
 set angle 1 0
@@ -144,7 +145,7 @@ script pause 10
 @echo
 @echo Ready?  Here we go!
 @echo
-run 30
+run {segment}
 @echo
 @echo Click Stand to leave the bob.
 @echo

@@ -16,7 +16,7 @@ notecards in its inventory and scripts may define pop-up menus through
 which an avatar may interact with the model.
 
 A demonstration of the model and features may be viewed on YouTube at:
-    https://www.youtube.com/watch?TBA
+    https://www.youtube.com/watch?v=eOBY2C0BamI
 
 REZZING DOUBLE PENDULUM IN-WORLD
 

@@ -67,11 +67,10 @@ trying to maintain it as the prim twists and turns is a fool's errand.
 The best approach is to set it to something innocuous and then, when
 you get the changed CHANGED_LINK event when a user sits on the prim,
 immediately override the avatar's position and rotation with the same
-code you use to move and orient the avatar as the prim moves withing
-the linkset.  This will save you a vast amount of confusion and
-suffering.
+code you use to move and orient the avatar as the prim moves within the
+linkset.  This will save you a vast amount of confusion and suffering.
 
-Confirmed that the transformations for sit on the moving bob acccount
+Confirmed that the transformations for sit on the moving bob account
 for global rotation of the root prim of the linkset.
 
 Confirmed that static sitting on the top of the case by sitting on
@@ -136,7 +135,7 @@ from Orbits into the code that sends parameters from the main script to
 the line plotters.  This not only preserves full precision (for what
 it's worth, in single precision) but is much faster than converting to
 and from decimal with llList2CSV() and back.  This should reduce the
-overhead for generating line paths in the main script to the mininum.
+overhead for generating line paths in the main script to the minimum.
 You can still see the difference compared to when line paths are turned
 off, but it's much faster than before.
 
@@ -189,7 +188,7 @@ Experimented with an alternative particle system for Set paths on. This
 drops circular particles of the smallest possible size (0.03125)
 without trying to connect them into a ribbon, which has a bunch of
 problems.  This also has compromises: when the bob is moving quickly,
-it makes disconncted dots which may not be obviously connected.  To
+it makes disconnected dots which may not be obviously connected.  To
 make it easier to interpret the trail, I made the path initially drawn
 in white, then "decay" to red over the 30 second lifetime of the
 particles.  I'm not sure which I prefer: I make make both available as
@@ -255,5 +254,32 @@ Fixed.
 
 2022 September 23
 
-To extract the audio track from a recording make with vokoscreen:
+To extract the audio track from a recording made with vokoscreen:
     ffmpeg -i recording.mkv -vn -acodec copy audio_track.ogg
+
+Completed the YouTube video demonstration:
+    https://www.youtube.com/watch?v=eOBY2C0BamI
+and added the link to it to the README.md file in the repository.
+
+Added the YouTube video to the Second Life Marketplace listing.
+
+Added the YouTube video URL to the User Guide notecard.
+
+Changed the chat channel back to the production value of 1993.
+
+Updated the Demonstration script in the repository to the latest
+version used to make the YouTube video.
+
+2022 September 24
+
+Added chapter marks to the YouTube video description.
+
+Verified that all of the notecards in the release candidate object are
+identical to those in the Git repository.
+
+Built a Hat version of the release candidate and installed in the
+Marketplace listing.
+
+Verified that the Hat version works in a region where the wearer
+doesn't have rez permission (except for Set path lines) and that the
+Hat continues to run across a teleport between regions.

@@ -38,7 +38,7 @@ copy, modify, and transfer it to other users within Second Life.
 
 ![Fourmilab Double Pendulum](marketplace/images/double_pendulum_05.png)
 
-A [video demonstration](https://www.youtube.com/watch?v=TBA)
+A [video demonstration](https://www.youtube.com/watch?v=eOBY2C0BamI)
 is available on YouTube.
 
 All of this software is licensed under the Creative Commons
