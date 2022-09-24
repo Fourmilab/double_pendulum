@@ -990,6 +990,12 @@
 
     default {
 
+        on_rez(integer start_param) {
+            if (llSubStringIndex(llGetObjectName(), " Hat") == -1) {
+                llResetScript();
+            }
+        }
+
         state_entry() {
             owner = whoDat = llGetOwner();
             ownerName =  llKey2Name(owner);  //  Save name of owner

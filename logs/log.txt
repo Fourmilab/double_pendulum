@@ -284,5 +284,13 @@ Verified that the Hat version works in a region where the wearer
 doesn't have rez permission (except for Set path lines) and that the
 Hat continues to run across a teleport between regions.
 
+Added an on_rez() handler which does an llResetScript().  This
+guarantees the Configuration script is run when the object is rezzed
+from the inventory.  This is important because we use that script to
+tell the owner how to run the Demonstration script and get the User
+Guide.  The on_rez() handler does not reset the script if the object
+name contains the substring " Hat", which allows the preconfiguration
+of the Hat version to be preserved when it is attached.
+
 Release v1.0 listed in Marketplace.  Made YouTube video public.
 Included this log in the Development Kit folder of the product.
