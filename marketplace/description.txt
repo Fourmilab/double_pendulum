@@ -6,7 +6,7 @@ Fourmilab Double Pendulum has a land impact of 7.  To rez it, you must have land
 
 Development Kit
 
-Fourmilab Tesseract is delivered including a development kit containing all of the object components, models, scripts, and documents used in the objects.  All items including scripts, have “full permissions” (copy, modify, and transfer), so that you can use them as the basis for your own development projects and/or share them with other users in Second Life.
+Fourmilab Double Pendulum is delivered including a development kit containing all of the object components, models, scripts, and documents used in the objects.  All items including scripts, have “full permissions” (copy, modify, and transfer), so that you can use them as the basis for your own development projects and/or share them with other users in Second Life.
 
 Source code for this project is maintained on and available from the GitHub repository:
     https://github.com/Fourmilab/double_pendulum
